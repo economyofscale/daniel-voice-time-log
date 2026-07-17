@@ -144,7 +144,7 @@ export default function App() {
           <div className="logo-row">
             <span className="logo-chip">
               <img
-                src="/logos/amco_logo.png"
+                src="./logos/amco_logo.png"
                 alt="AMCO"
                 className="logo logo-amco"
                 onError={hideBrokenImage}
@@ -152,7 +152,7 @@ export default function App() {
             </span>
             <span className="logo-chip">
               <img
-                src="/logos/cpmpartners_logo.png"
+                src="./logos/cpmpartners_logo.png"
                 alt="CPM Partners"
                 className="logo logo-cpm"
                 onError={hideBrokenImage}
