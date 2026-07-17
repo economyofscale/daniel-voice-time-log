@@ -3,3 +3,8 @@ dist/
 release/
 .env
 .env.local
+
+# Company logos stay local-only (still included in local .exe builds)
+public/logos/
+assets/amco_logo.png
+assets/cpmpartners_logo.png
