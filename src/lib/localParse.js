@@ -31,11 +31,36 @@ const TASK_KEYWORDS = [
   [/review/, 'Review'],
 ];
 
-// Words that end an explicit "task …" phrase.
-const TASK_STOPWORDS = new Set([
+// Words that end an explicit "task …" / "project …" phrase.
+const PHRASE_STOPWORDS = new Set([
   'for', 'on', 'in', 'at', 'and', 'with', 'today',
-  'für', 'an', 'am', 'im', 'in', 'und', 'mit', 'heute', 'projekt', 'project',
+  'für', 'an', 'am', 'im', 'in', 'und', 'mit', 'heute',
+  'projekt', 'project', 'task', 'aufgabe',
 ]);
+
+/**
+ * Takes the leading words of a captured phrase, stopping at connectors,
+ * numbers, and duration words — so "Doku 45 Minuten" yields just "Doku".
+ * Returns the capitalized phrase or ''.
+ */
+function takeWords(captured) {
+  const words = [];
+  for (const word of captured.trim().split(/\s+/)) {
+    const w = word.toLowerCase();
+    if (
+      PHRASE_STOPWORDS.has(w) ||
+      w in WORD_HOURS ||
+      /^\d/.test(w) ||
+      /^(minute|minuten|min|stunde|stunden|hour|hours|halbe)/.test(w)
+    ) {
+      break;
+    }
+    words.push(word);
+  }
+  if (words.length === 0) return '';
+  const label = words.join(' ');
+  return label.charAt(0).toUpperCase() + label.slice(1);
+}
 
 function detectTask(transcript, lowered) {
   // Explicit: "task code review …" / "Aufgabe Besprechung …"
@@ -43,25 +68,8 @@ function detectTask(transcript, lowered) {
     /\b(?:task|aufgabe)\s+((?:[\p{L}\d-]+\s*){1,4})/iu
   );
   if (explicit) {
-    const words = [];
-    for (const word of explicit[1].trim().split(/\s+/)) {
-      const w = word.toLowerCase();
-      // Stop at connectors, numbers, and duration words so "Aufgabe Doku 45
-      // Minuten" yields just "Doku".
-      if (
-        TASK_STOPWORDS.has(w) ||
-        w in WORD_HOURS ||
-        /^\d/.test(w) ||
-        /^(minute|minuten|min|stunde|stunden|hour|hours|halbe)/.test(w)
-      ) {
-        break;
-      }
-      words.push(word);
-    }
-    if (words.length > 0) {
-      const label = words.join(' ');
-      return label.charAt(0).toUpperCase() + label.slice(1);
-    }
+    const label = takeWords(explicit[1]);
+    if (label) return label;
   }
 
   // Fallback: known work-type keywords anywhere in the sentence.
@@ -92,10 +100,8 @@ export function localParse(transcript) {
     }
   }
 
-  const proj = transcript.match(/\bproje[ck]t\s+([\p{L}\d-]+)/iu);
-  const project = proj
-    ? proj[1].charAt(0).toUpperCase() + proj[1].slice(1)
-    : '';
+  const proj = transcript.match(/\bproje[ck]t\s+((?:[\p{L}\d-]+\s*){1,4})/iu);
+  const project = proj ? takeWords(proj[1]) : '';
 
   return {
     project,

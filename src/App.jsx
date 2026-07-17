@@ -138,6 +138,30 @@ export default function App() {
   }
 
   return (
+    <>
+      <div className="header-band">
+        <div className="band-inner">
+          <div className="logo-row">
+            <span className="logo-chip">
+              <img
+                src="/logos/amco_logo.png"
+                alt="AMCO"
+                className="logo logo-amco"
+                onError={hideBrokenImage}
+              />
+            </span>
+            <span className="logo-chip">
+              <img
+                src="/logos/cpmpartners_logo.png"
+                alt="CPM Partners"
+                className="logo logo-cpm"
+                onError={hideBrokenImage}
+              />
+            </span>
+          </div>
+        </div>
+      </div>
+
     <main className="app">
       <header className="app-header">
         <div>
@@ -145,20 +169,6 @@ export default function App() {
           <p className="subtitle">
             Speak what you worked on — it becomes a structured time entry.
           </p>
-        </div>
-        <div className="logo-row">
-          <img
-            src="/logos/amco_logo.png"
-            alt="AMCO"
-            className="logo logo-amco"
-            onError={hideBrokenImage}
-          />
-          <img
-            src="/logos/cpmpartners_logo.png"
-            alt="CPM Partners"
-            className="logo logo-cpm"
-            onError={hideBrokenImage}
-          />
         </div>
       </header>
 
@@ -280,5 +290,6 @@ export default function App() {
         </button>
       </footer>
     </main>
+    </>
   );
 }

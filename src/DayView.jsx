@@ -24,6 +24,18 @@ function formatTotal(minutes) {
   return `${h} h ${m} min`;
 }
 
+/** 90 -> "01:30" */
+function formatHM(minutes) {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+}
+
+/** Nearest 15-minute step: 40 -> 45, 35 -> 30. */
+function roundToQuarter(minutes) {
+  return Math.round(minutes / 15) * 15;
+}
+
 const WEEKLY_TARGET_MINUTES = 40 * 60;
 
 /** Monday and Sunday (YYYY-MM-DD) of the week containing the given date. */
@@ -156,6 +168,12 @@ export default function DayView({ date, refreshKey, onEntriesChanged, lang = 'en
   }
 
   const total = entries.reduce((sum, e) => sum + e.minutes, 0);
+  // Totals column sums the per-entry rounded values (like a billing sheet),
+  // not the rounded exact total — the two can differ.
+  const roundedTotal = entries.reduce(
+    (sum, e) => sum + roundToQuarter(e.minutes),
+    0
+  );
 
   const byProject = new Map();
   for (const e of entries) {
@@ -166,7 +184,9 @@ export default function DayView({ date, refreshKey, onEntriesChanged, lang = 'en
   const totalRow = (
     <tr className="total-row">
       <td colSpan={4}>Total</td>
-      <td className="num">{formatTotal(total)}</td>
+      <td className="num">{total}</td>
+      <td className="num">{formatHM(total)}</td>
+      <td className="num">{formatHM(roundedTotal)}</td>
       <td />
     </tr>
   );
@@ -226,6 +246,8 @@ export default function DayView({ date, refreshKey, onEntriesChanged, lang = 'en
                 <th>Task</th>
                 <th>Description</th>
                 <th className="num">Minutes</th>
+                <th className="num">hh:mm</th>
+                <th className="num">Rounded</th>
                 <th aria-label="Actions" />
               </tr>
             </thead>
@@ -233,7 +255,7 @@ export default function DayView({ date, refreshKey, onEntriesChanged, lang = 'en
               {entries.map((entry) =>
                 editingId === entry.id ? (
                   <tr key={entry.id} className="editing-row">
-                    <td colSpan={6}>
+                    <td colSpan={8}>
                       <EntryEditor
                         entry={entry}
                         onSave={handleUpdate}
@@ -248,6 +270,8 @@ export default function DayView({ date, refreshKey, onEntriesChanged, lang = 'en
                     <td>{entry.task || '—'}</td>
                     <td className="cell-desc">{entry.description}</td>
                     <td className="num">{entry.minutes}</td>
+                    <td className="num">{formatHM(entry.minutes)}</td>
+                    <td className="num">{formatHM(roundToQuarter(entry.minutes))}</td>
                     <td className="cell-actions">
                       <button
                         className="entry-action"

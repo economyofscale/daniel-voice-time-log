@@ -1,16 +1,16 @@
 :root {
-  --bg: #f7f7f5;
-  --text-primary: #0b1f35;
-  --accent-primary: #f2994a;
-  --accent-primary-strong: #d97f2e;
-  --accent-secondary: #d0021b;
-  --table-row-alt: rgba(11, 31, 53, 0.04);
-  --surface: #ffffff;
-  --border: rgba(11, 31, 53, 0.14);
-  --border-soft: rgba(11, 31, 53, 0.08);
-  --text-muted: rgba(11, 31, 53, 0.62);
-  --text-faint: rgba(11, 31, 53, 0.4);
-  --ring-track: rgba(11, 31, 53, 0.08);
+  --navy: #0b1f35;
+  --paper: #f5f6f4;
+  --panel: #ffffff;
+  --amco-orange: #f2994a;
+  --amco-orange-strong: #d97f2e;
+  --cpm-red: #d0021b;
+  --line: #e2e4e1;
+  --ink-muted: #5b6472;
+  --row-tint: rgba(11, 31, 53, 0.04);
+  --ink-faint: rgba(11, 31, 53, 0.4);
+  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
 }
 
 * {
@@ -19,33 +19,65 @@
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-  background: var(--bg);
-  color: var(--text-primary);
+  font-family: var(--font-sans);
+  background: var(--paper);
+  color: var(--navy);
 }
 
-.app {
-  max-width: 1100px;
+/* Visible keyboard focus everywhere; orange reads well against paper & navy. */
+:focus-visible {
+  outline: 2px solid var(--amco-orange);
+  outline-offset: 2px;
+}
+
+/* ---- Header band ---- */
+
+.header-band {
+  position: relative;
+  background: var(--navy);
+  overflow: hidden;
+}
+
+/* Faint dot-grid texture in the band's empty left space — a nod to the CPM
+   dot mark. Fades out toward the logos. */
+.header-band::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  right: 45%;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.14) 1px, transparent 1px);
+  background-size: 14px 14px;
+  -webkit-mask-image: linear-gradient(to right, black 55%, transparent);
+  mask-image: linear-gradient(to right, black 55%, transparent);
+  pointer-events: none;
+}
+
+.band-inner {
+  position: relative;
+  max-width: 1500px;
   margin: 0 auto;
-  padding: 1.5rem 1.25rem 2.5rem;
-}
-
-/* ---- Logos & header ---- */
-
-.app-header {
+  padding: 0.7rem 1.25rem;
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem 1.5rem;
-  margin-bottom: 1.5rem;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 .logo-row {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
-  padding-top: 0.2rem;
+  gap: 1rem;
+}
+
+/* The logo artwork is navy-on-transparent — invisible on the navy band, so
+   each sits on a small white chip. */
+.logo-chip {
+  display: inline-flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 6px;
+  padding: 5px 12px;
+  height: 44px;
+  overflow: hidden;
 }
 
 .logo {
@@ -54,32 +86,46 @@ body {
 }
 
 .logo-amco {
-  height: 34px;
+  height: 26px;
 }
 
-/* The CPM file has large transparent padding baked in — render it bigger and
-   trim the excess with negative margins so both marks match visually. */
+/* CPM file has large transparent padding baked in — oversize + trim. */
 .logo-cpm {
-  height: 62px;
-  margin: -14px 0;
+  height: 52px;
+  margin: -12px 0;
+}
+
+/* ---- Page header ---- */
+
+.app {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 2.5rem;
+}
+
+.app-header {
+  margin-bottom: 1.5rem;
 }
 
 header h1 {
   margin: 0 0 0.25rem;
   font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--navy);
 }
 
 .subtitle {
   margin: 0;
-  color: var(--text-muted);
+  color: var(--ink-muted);
 }
 
 /* ---- Two-column layout ---- */
 
 .layout {
   display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-  gap: 2rem;
+  /* Left column stays compact; extra width goes to the log table. */
+  grid-template-columns: minmax(320px, 430px) minmax(0, 1fr);
+  gap: 2.5rem;
   align-items: start;
 }
 
@@ -95,24 +141,27 @@ header h1 {
 .record-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 1.05rem;
+  gap: 0.55rem;
+  font-family: var(--font-sans);
+  font-size: 1.1rem;
   font-weight: 600;
-  padding: 0.7rem 1.4rem;
+  padding: 0.85rem 1.7rem;
   border: none;
   border-radius: 999px;
-  background: var(--accent-primary);
+  background: var(--amco-orange);
   color: #fff;
   cursor: pointer;
+  box-shadow: 0 2px 10px rgba(242, 153, 74, 0.35);
 }
 
 .record-btn:hover {
-  background: var(--accent-primary-strong);
+  background: var(--amco-orange-strong);
 }
 
 .record-btn:disabled {
   opacity: 0.6;
   cursor: default;
+  box-shadow: none;
 }
 
 .record-btn .record-dot {
@@ -123,14 +172,21 @@ header h1 {
 }
 
 .record-btn.recording {
-  background: var(--accent-primary-strong);
+  background: var(--amco-orange-strong);
+  animation: pulse-ring 1.6s ease-out infinite;
 }
 
 .record-btn.recording .record-dot {
-  animation: pulse 1.2s ease-in-out infinite;
+  animation: pulse-dot 1.2s ease-in-out infinite;
 }
 
-@keyframes pulse {
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(242, 153, 74, 0.45); }
+  70% { box-shadow: 0 0 0 16px rgba(242, 153, 74, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(242, 153, 74, 0); }
+}
+
+@keyframes pulse-dot {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.3; }
 }
@@ -140,46 +196,47 @@ header h1 {
   align-items: center;
   gap: 0.5rem;
   font-size: 0.9rem;
-  color: var(--text-muted);
+  color: var(--ink-muted);
 }
 
 .lang-select select {
+  font-family: var(--font-sans);
   font-size: 0.9rem;
   padding: 0.35rem 0.5rem;
-  border: 1px solid var(--border);
+  border: 1px solid var(--line);
   border-radius: 6px;
-  background: var(--surface);
-  color: var(--text-primary);
+  background: var(--panel);
+  color: var(--navy);
 }
 
 .clear-btn {
+  font-family: var(--font-sans);
   font-size: 0.9rem;
   padding: 0.45rem 0.9rem;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--surface);
-  color: var(--text-muted);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel);
+  color: var(--ink-muted);
   cursor: pointer;
 }
 
 .clear-btn:hover {
-  background: var(--bg);
+  background: var(--paper);
 }
 
 .status {
   margin: 1rem 0 0;
-  color: var(--accent-primary-strong);
+  color: var(--amco-orange-strong);
   font-weight: 500;
 }
 
 .status.parsing {
-  color: var(--text-muted);
+  color: var(--ink-muted);
 }
 
 /* ---- Notices ---- */
 
 .notice {
-  margin-top: 0;
   margin-bottom: 1rem;
   padding: 0.9rem 1rem;
   border-radius: 8px;
@@ -189,7 +246,7 @@ header h1 {
 .notice-error {
   background: #fdf1f2;
   border: 1px solid rgba(208, 2, 27, 0.25);
-  color: var(--accent-secondary);
+  color: var(--cpm-red);
 }
 
 .notice-success {
@@ -199,9 +256,9 @@ header h1 {
 }
 
 .notice-info {
-  background: rgba(11, 31, 53, 0.05);
-  border: 1px solid var(--border-soft);
-  color: var(--text-primary);
+  background: var(--row-tint);
+  border: 1px solid var(--line);
+  color: var(--navy);
 }
 
 /* ---- Transcript ---- */
@@ -210,9 +267,9 @@ header h1 {
   margin-top: 1.25rem;
   min-height: 8rem;
   padding: 1.1rem 1.2rem;
-  background: var(--surface);
-  border: 1px solid var(--border-soft);
-  border-radius: 10px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
   font-size: 1.05rem;
   line-height: 1.55;
 }
@@ -224,14 +281,14 @@ header h1 {
 .transcript .interim,
 .transcript .placeholder,
 .placeholder {
-  color: var(--text-faint);
+  color: var(--ink-faint);
 }
 
 .key-hint {
   margin-top: 1rem;
   font-size: 0.85rem;
   line-height: 1.5;
-  color: var(--text-muted);
+  color: var(--ink-muted);
 }
 
 /* ---- Review form ---- */
@@ -241,9 +298,9 @@ header h1 {
   flex-direction: column;
   gap: 0.9rem;
   padding: 1.25rem;
-  background: var(--surface);
-  border: 1px solid var(--border-soft);
-  border-radius: 10px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
 }
 
 .review-form h2 {
@@ -257,31 +314,29 @@ header h1 {
   gap: 0.3rem;
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--text-muted);
+  color: var(--ink-muted);
 }
 
 .review-form input,
 .review-form textarea {
-  font: inherit;
+  font-family: var(--font-sans);
+  font-size: 1rem;
   font-weight: 400;
-  color: var(--text-primary);
+  color: var(--navy);
   padding: 0.5rem 0.6rem;
-  border: 1px solid var(--border);
+  border: 1px solid var(--line);
   border-radius: 6px;
-  background: var(--surface);
+  background: var(--panel);
 }
 
-.review-form input:focus,
-.review-form textarea:focus,
-.entry-editor input:focus,
-.entry-editor textarea:focus {
-  outline: 2px solid var(--accent-primary);
-  outline-offset: 1px;
+.review-form input[type='date'],
+.review-form input[type='number'] {
+  font-family: var(--font-mono);
 }
 
 .raw-transcript {
   font-size: 0.85rem;
-  color: var(--text-muted);
+  color: var(--ink-muted);
 }
 
 .raw-transcript summary {
@@ -299,18 +354,19 @@ header h1 {
 }
 
 .save-btn {
+  font-family: var(--font-sans);
   font-size: 1rem;
   font-weight: 600;
   padding: 0.6rem 1.4rem;
   border: none;
-  border-radius: 999px;
-  background: var(--accent-primary);
+  border-radius: 6px;
+  background: var(--amco-orange);
   color: #fff;
   cursor: pointer;
 }
 
 .save-btn:hover {
-  background: var(--accent-primary-strong);
+  background: var(--amco-orange-strong);
 }
 
 .save-btn:disabled {
@@ -319,17 +375,18 @@ header h1 {
 }
 
 .discard-btn {
+  font-family: var(--font-sans);
   font-size: 1rem;
   padding: 0.6rem 1.2rem;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--surface);
-  color: var(--text-muted);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel);
+  color: var(--ink-muted);
   cursor: pointer;
 }
 
 .discard-btn:hover {
-  background: var(--bg);
+  background: var(--paper);
 }
 
 .save-btn.small,
@@ -338,13 +395,13 @@ header h1 {
   padding: 0.35rem 0.9rem;
 }
 
-/* ---- Calendar ---- */
+/* ---- Calendar (ledger style) ---- */
 
 .calendar {
   margin-top: 1.5rem;
-  background: var(--surface);
-  border: 1px solid var(--border-soft);
-  border-radius: 10px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
   padding: 0.9rem 1rem 1rem;
 }
 
@@ -360,87 +417,93 @@ header h1 {
 }
 
 .cal-nav {
-  border: 1px solid var(--border);
-  background: var(--surface);
+  border: 1px solid var(--line);
+  background: var(--panel);
   border-radius: 6px;
   width: 2rem;
   height: 2rem;
   font-size: 1.1rem;
   line-height: 1;
   cursor: pointer;
-  color: var(--text-muted);
+  color: var(--ink-muted);
 }
 
 .cal-nav:hover {
-  background: var(--bg);
+  background: var(--paper);
 }
 
 .cal-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
+  gap: 0;
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
 }
 
 .cal-cell {
   text-align: center;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
 }
 
 .cal-weekday {
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: var(--text-faint);
-  padding: 0.25rem 0;
+  letter-spacing: 0.05em;
+  color: var(--ink-faint);
+  padding: 0.3rem 0;
+  background: var(--row-tint);
 }
 
 .cal-day {
   position: relative;
+  width: 100%;
   border: none;
   background: none;
-  font: inherit;
-  font-size: 0.9rem;
-  color: var(--text-primary);
-  padding: 0.45rem 0 0.75rem;
-  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  color: var(--navy);
+  padding: 0.5rem 0 0.8rem;
+  border-radius: 0;
   cursor: pointer;
 }
 
 .cal-day:hover {
-  background: var(--table-row-alt);
+  background: var(--row-tint);
 }
 
-.cal-today {
-  font-weight: 700;
-}
-
+/* Selected day: hairline navy inset frame. */
 .cal-selected,
 .cal-selected:hover {
-  background: var(--text-primary);
+  box-shadow: inset 0 0 0 2px var(--navy);
+}
+
+/* Today: filled navy square — orange stays reserved for record/daily gauge. */
+.cal-today,
+.cal-today:hover {
+  background: var(--navy);
   color: #fff;
+  font-weight: 600;
 }
 
 .cal-dot {
   display: none;
   position: absolute;
-  bottom: 0.3rem;
+  bottom: 0.32rem;
   left: 50%;
   transform: translateX(-50%);
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--accent-primary);
+  background: var(--amco-orange);
 }
 
 .cal-has-entries .cal-dot {
   display: block;
 }
 
-.cal-selected .cal-dot {
-  background: #fff;
-}
-
-/* ---- Day view: ring + summary ---- */
+/* ---- Day summary: gauges ---- */
 
 .day-view {
   margin-top: 0;
@@ -449,7 +512,7 @@ header h1 {
 .day-summary {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1.5rem;
   flex-wrap: wrap;
   margin-bottom: 1rem;
 }
@@ -458,46 +521,45 @@ header h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.1rem;
   flex: 0 0 auto;
 }
 
 .ring-caption {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
-}
-
-.ring-weekly .ring-progress {
-  stroke: var(--text-primary);
-}
-
-.day-summary-info h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.25rem;
-}
-
-.day-view-tools {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+  letter-spacing: 0.12em;
+  color: var(--ink-muted);
+  /* Sits within the dial's bottom gap. */
+  margin-top: -1.4rem;
 }
 
 .progress-ring {
   position: relative;
-  flex: 0 0 auto;
+}
+
+.tick {
+  stroke: var(--line);
+  stroke-width: 1.5;
+}
+
+.tick-bold {
+  stroke: var(--ink-muted);
+  stroke-width: 2.5;
 }
 
 .ring-track {
-  stroke: var(--ring-track);
+  stroke: var(--line);
 }
 
 .ring-progress {
-  stroke: var(--accent-primary);
-  transition: stroke-dashoffset 0.4s ease;
+  stroke: var(--amco-orange);
+  transition: stroke-dasharray 0.4s ease;
+}
+
+.ring-weekly .ring-progress {
+  stroke: var(--cpm-red);
 }
 
 .ring-label {
@@ -512,33 +574,45 @@ header h1 {
 }
 
 .ring-time {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--navy);
 }
 
 .ring-pct {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--ink-muted);
+}
+
+.day-summary-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+}
+
+.day-view-tools {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .speak-btn {
-  font: inherit;
+  font-family: var(--font-sans);
   font-size: 0.82rem;
   padding: 0.3rem 0.7rem;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--surface);
-  color: var(--text-muted);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel);
+  color: var(--ink-muted);
   cursor: pointer;
   white-space: nowrap;
 }
 
 .speak-btn:hover {
-  background: var(--bg);
+  background: var(--paper);
 }
 
 .project-subtotals {
@@ -547,11 +621,11 @@ header h1 {
   gap: 0.4rem 0.9rem;
   margin: 0 0 0.75rem;
   font-size: 0.85rem;
-  color: var(--text-muted);
+  color: var(--ink-muted);
 }
 
 .project-subtotal {
-  background: var(--table-row-alt);
+  background: var(--row-tint);
   border-radius: 4px;
   padding: 0.15rem 0.5rem;
 }
@@ -560,9 +634,9 @@ header h1 {
 
 .table-wrap {
   overflow-x: auto;
-  background: var(--surface);
-  border: 1px solid var(--border-soft);
-  border-radius: 10px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
 }
 
 .log-table {
@@ -579,40 +653,44 @@ header h1 {
 }
 
 .log-table .num {
+  font-family: var(--font-mono);
   text-align: right;
-  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
 .log-table .col-head th {
-  background: var(--text-primary);
+  background: var(--navy);
   color: #fff;
-  font-size: 0.78rem;
+  font-family: var(--font-sans);
+  font-size: 0.76rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  border-bottom: 2px solid var(--accent-secondary);
+  letter-spacing: 0.06em;
   white-space: nowrap;
 }
 
 .log-table tbody tr:nth-child(even) {
-  background: var(--table-row-alt);
+  background: var(--row-tint);
+}
+
+.log-table tbody tr:not(.editing-row):hover {
+  background: rgba(11, 31, 53, 0.08);
 }
 
 .total-row td {
-  background: var(--surface);
+  background: var(--panel);
   font-weight: 700;
-  border-top: 2px solid var(--accent-secondary);
+  border-top: 2px solid var(--cpm-red);
 }
 
 thead .total-row td {
   border-top: none;
-  border-bottom: 2px solid var(--accent-secondary);
+  border-bottom: 2px solid var(--cpm-red);
 }
 
 .cell-time {
-  color: var(--text-muted);
-  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+  color: var(--ink-muted);
   white-space: nowrap;
 }
 
@@ -621,7 +699,7 @@ thead .total-row td {
 }
 
 .cell-desc {
-  color: var(--text-muted);
+  color: var(--ink-muted);
   line-height: 1.4;
 }
 
@@ -633,22 +711,22 @@ thead .total-row td {
 .entry-action {
   border: none;
   background: none;
-  color: var(--text-faint);
+  color: var(--ink-faint);
   font-size: 0.85rem;
   cursor: pointer;
   padding: 0.15rem 0.3rem;
 }
 
 .entry-action:hover {
-  color: var(--accent-primary-strong);
+  color: var(--amco-orange-strong);
 }
 
 .entry-action-delete:hover {
-  color: var(--accent-secondary);
+  color: var(--cpm-red);
 }
 
 .editing-row td {
-  background: var(--table-row-alt);
+  background: var(--row-tint);
 }
 
 /* ---- Inline entry editor ---- */
@@ -666,13 +744,13 @@ thead .total-row td {
 
 .entry-editor input,
 .entry-editor textarea {
-  font: inherit;
+  font-family: var(--font-sans);
   font-size: 0.9rem;
   padding: 0.4rem 0.5rem;
-  border: 1px solid var(--border);
+  border: 1px solid var(--line);
   border-radius: 6px;
-  background: var(--surface);
-  color: var(--text-primary);
+  background: var(--panel);
+  color: var(--navy);
 }
 
 .entry-editor-row input {
@@ -682,6 +760,7 @@ thead .total-row td {
 
 .entry-editor-minutes {
   flex: 0 0 5rem;
+  font-family: var(--font-mono) !important;
 }
 
 .entry-editor-actions {
@@ -694,25 +773,38 @@ thead .total-row td {
 .app-footer {
   margin-top: 2rem;
   padding-top: 1rem;
-  border-top: 1px solid var(--border-soft);
+  border-top: 1px solid var(--line);
   display: flex;
   gap: 0.6rem;
 }
 
 .export-btn {
-  font: inherit;
+  font-family: var(--font-sans);
   font-size: 0.85rem;
   padding: 0.4rem 0.9rem;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--surface);
-  color: var(--text-primary);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel);
+  color: var(--navy);
   cursor: pointer;
 }
 
 .export-btn:hover {
-  border-color: var(--accent-primary);
-  color: var(--accent-primary-strong);
+  border-color: var(--amco-orange);
+  color: var(--amco-orange-strong);
+}
+
+/* ---- Reduced motion ---- */
+
+@media (prefers-reduced-motion: reduce) {
+  .record-btn.recording,
+  .record-btn.recording .record-dot {
+    animation: none;
+  }
+
+  .ring-progress {
+    transition: none;
+  }
 }
 
 /* ---- Responsive ---- */
@@ -737,13 +829,22 @@ thead .total-row td {
     font-size: 1.35rem;
   }
 
+  .band-inner {
+    padding: 0.55rem 0.9rem;
+  }
+
+  .logo-chip {
+    height: 38px;
+    padding: 4px 9px;
+  }
+
   .logo-amco {
-    height: 26px;
+    height: 22px;
   }
 
   .logo-cpm {
-    height: 48px;
-    margin: -11px 0;
+    height: 44px;
+    margin: -10px 0;
   }
 
   .controls {
@@ -767,8 +868,8 @@ thead .total-row td {
   }
 
   .cal-day {
-    font-size: 0.85rem;
-    padding: 0.4rem 0 0.7rem;
+    font-size: 0.82rem;
+    padding: 0.45rem 0 0.72rem;
   }
 
   .day-summary {
