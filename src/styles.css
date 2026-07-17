@@ -1,3 +1,18 @@
+:root {
+  --bg: #f7f7f5;
+  --text-primary: #0b1f35;
+  --accent-primary: #f2994a;
+  --accent-primary-strong: #d97f2e;
+  --accent-secondary: #d0021b;
+  --table-row-alt: rgba(11, 31, 53, 0.04);
+  --surface: #ffffff;
+  --border: rgba(11, 31, 53, 0.14);
+  --border-soft: rgba(11, 31, 53, 0.08);
+  --text-muted: rgba(11, 31, 53, 0.62);
+  --text-faint: rgba(11, 31, 53, 0.4);
+  --ring-track: rgba(11, 31, 53, 0.08);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -5,14 +20,48 @@
 body {
   margin: 0;
   font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-  background: #f5f5f4;
-  color: #1c1917;
+  background: var(--bg);
+  color: var(--text-primary);
 }
 
 .app {
-  max-width: 640px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 2rem 1.25rem;
+  padding: 1.5rem 1.25rem 2.5rem;
+}
+
+/* ---- Logos & header ---- */
+
+.app-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.logo-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding-top: 0.2rem;
+}
+
+.logo {
+  width: auto;
+  object-fit: contain;
+}
+
+.logo-amco {
+  height: 34px;
+}
+
+/* The CPM file has large transparent padding baked in — render it bigger and
+   trim the excess with negative margins so both marks match visually. */
+.logo-cpm {
+  height: 62px;
+  margin: -14px 0;
 }
 
 header h1 {
@@ -21,9 +70,20 @@ header h1 {
 }
 
 .subtitle {
-  margin: 0 0 1.5rem;
-  color: #57534e;
+  margin: 0;
+  color: var(--text-muted);
 }
+
+/* ---- Two-column layout ---- */
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 2rem;
+  align-items: start;
+}
+
+/* ---- Recorder controls ---- */
 
 .controls {
   display: flex;
@@ -41,32 +101,32 @@ header h1 {
   padding: 0.7rem 1.4rem;
   border: none;
   border-radius: 999px;
-  background: #1c1917;
+  background: var(--accent-primary);
   color: #fff;
   cursor: pointer;
 }
 
 .record-btn:hover {
-  background: #292524;
+  background: var(--accent-primary-strong);
+}
+
+.record-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
 
 .record-btn .record-dot {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #dc2626;
+  background: #fff;
 }
 
 .record-btn.recording {
-  background: #dc2626;
-}
-
-.record-btn.recording:hover {
-  background: #b91c1c;
+  background: var(--accent-primary-strong);
 }
 
 .record-btn.recording .record-dot {
-  background: #fff;
   animation: pulse 1.2s ease-in-out infinite;
 }
 
@@ -80,58 +140,80 @@ header h1 {
   align-items: center;
   gap: 0.5rem;
   font-size: 0.9rem;
-  color: #57534e;
+  color: var(--text-muted);
 }
 
 .lang-select select {
   font-size: 0.9rem;
   padding: 0.35rem 0.5rem;
-  border: 1px solid #d6d3d1;
+  border: 1px solid var(--border);
   border-radius: 6px;
-  background: #fff;
+  background: var(--surface);
+  color: var(--text-primary);
 }
 
 .clear-btn {
   font-size: 0.9rem;
   padding: 0.45rem 0.9rem;
-  border: 1px solid #d6d3d1;
+  border: 1px solid var(--border);
   border-radius: 999px;
-  background: #fff;
-  color: #57534e;
+  background: var(--surface);
+  color: var(--text-muted);
   cursor: pointer;
 }
 
 .clear-btn:hover {
-  background: #fafaf9;
+  background: var(--bg);
 }
 
 .status {
   margin: 1rem 0 0;
-  color: #dc2626;
+  color: var(--accent-primary-strong);
   font-weight: 500;
 }
 
+.status.parsing {
+  color: var(--text-muted);
+}
+
+/* ---- Notices ---- */
+
 .notice {
-  margin-top: 1rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
   padding: 0.9rem 1rem;
   border-radius: 8px;
   line-height: 1.45;
 }
 
 .notice-error {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #991b1b;
+  background: #fdf1f2;
+  border: 1px solid rgba(208, 2, 27, 0.25);
+  color: var(--accent-secondary);
 }
+
+.notice-success {
+  background: #f0f7f1;
+  border: 1px solid rgba(31, 122, 61, 0.3);
+  color: #1f7a3d;
+}
+
+.notice-info {
+  background: rgba(11, 31, 53, 0.05);
+  border: 1px solid var(--border-soft);
+  color: var(--text-primary);
+}
+
+/* ---- Transcript ---- */
 
 .transcript {
   margin-top: 1.25rem;
-  min-height: 10rem;
+  min-height: 8rem;
   padding: 1.1rem 1.2rem;
-  background: #fff;
-  border: 1px solid #e7e5e4;
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
   border-radius: 10px;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   line-height: 1.55;
 }
 
@@ -139,10 +221,570 @@ header h1 {
   margin: 0;
 }
 
-.transcript .interim {
-  color: #a8a29e;
+.transcript .interim,
+.transcript .placeholder,
+.placeholder {
+  color: var(--text-faint);
 }
 
-.transcript .placeholder {
-  color: #a8a29e;
+.key-hint {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* ---- Review form ---- */
+
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+}
+
+.review-form h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.review-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.review-form input,
+.review-form textarea {
+  font: inherit;
+  font-weight: 400;
+  color: var(--text-primary);
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+}
+
+.review-form input:focus,
+.review-form textarea:focus,
+.entry-editor input:focus,
+.entry-editor textarea:focus {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 1px;
+}
+
+.raw-transcript {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.raw-transcript summary {
+  cursor: pointer;
+}
+
+.raw-transcript p {
+  margin: 0.4rem 0 0;
+  font-style: italic;
+}
+
+.review-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.save-btn {
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.6rem 1.4rem;
+  border: none;
+  border-radius: 999px;
+  background: var(--accent-primary);
+  color: #fff;
+  cursor: pointer;
+}
+
+.save-btn:hover {
+  background: var(--accent-primary-strong);
+}
+
+.save-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.discard-btn {
+  font-size: 1rem;
+  padding: 0.6rem 1.2rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.discard-btn:hover {
+  background: var(--bg);
+}
+
+.save-btn.small,
+.discard-btn.small {
+  font-size: 0.85rem;
+  padding: 0.35rem 0.9rem;
+}
+
+/* ---- Calendar ---- */
+
+.calendar {
+  margin-top: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  padding: 0.9rem 1rem 1rem;
+}
+
+.cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+}
+
+.cal-month {
+  font-weight: 600;
+}
+
+.cal-nav {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 6px;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--text-muted);
+}
+
+.cal-nav:hover {
+  background: var(--bg);
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.cal-cell {
+  text-align: center;
+}
+
+.cal-weekday {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-faint);
+  padding: 0.25rem 0;
+}
+
+.cal-day {
+  position: relative;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  padding: 0.45rem 0 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.cal-day:hover {
+  background: var(--table-row-alt);
+}
+
+.cal-today {
+  font-weight: 700;
+}
+
+.cal-selected,
+.cal-selected:hover {
+  background: var(--text-primary);
+  color: #fff;
+}
+
+.cal-dot {
+  display: none;
+  position: absolute;
+  bottom: 0.3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+}
+
+.cal-has-entries .cal-dot {
+  display: block;
+}
+
+.cal-selected .cal-dot {
+  background: #fff;
+}
+
+/* ---- Day view: ring + summary ---- */
+
+.day-view {
+  margin-top: 0;
+}
+
+.day-summary {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.ring-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 0 0 auto;
+}
+
+.ring-caption {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.ring-weekly .ring-progress {
+  stroke: var(--text-primary);
+}
+
+.day-summary-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+}
+
+.day-view-tools {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.progress-ring {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.ring-track {
+  stroke: var(--ring-track);
+}
+
+.ring-progress {
+  stroke: var(--accent-primary);
+  transition: stroke-dashoffset 0.4s ease;
+}
+
+.ring-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1rem;
+  pointer-events: none;
+}
+
+.ring-time {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.ring-pct {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.speak-btn {
+  font: inherit;
+  font-size: 0.82rem;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.speak-btn:hover {
+  background: var(--bg);
+}
+
+.project-subtotals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.9rem;
+  margin: 0 0 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.project-subtotal {
+  background: var(--table-row-alt);
+  border-radius: 4px;
+  padding: 0.15rem 0.5rem;
+}
+
+/* ---- Log table ---- */
+
+.table-wrap {
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+}
+
+.log-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.log-table th,
+.log-table td {
+  padding: 0.55rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.log-table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.log-table .col-head th {
+  background: var(--text-primary);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 2px solid var(--accent-secondary);
+  white-space: nowrap;
+}
+
+.log-table tbody tr:nth-child(even) {
+  background: var(--table-row-alt);
+}
+
+.total-row td {
+  background: var(--surface);
+  font-weight: 700;
+  border-top: 2px solid var(--accent-secondary);
+}
+
+thead .total-row td {
+  border-top: none;
+  border-bottom: 2px solid var(--accent-secondary);
+}
+
+.cell-time {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.cell-project {
+  font-weight: 600;
+}
+
+.cell-desc {
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.cell-actions {
+  white-space: nowrap;
+  text-align: right;
+}
+
+.entry-action {
+  border: none;
+  background: none;
+  color: var(--text-faint);
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0.15rem 0.3rem;
+}
+
+.entry-action:hover {
+  color: var(--accent-primary-strong);
+}
+
+.entry-action-delete:hover {
+  color: var(--accent-secondary);
+}
+
+.editing-row td {
+  background: var(--table-row-alt);
+}
+
+/* ---- Inline entry editor ---- */
+
+.entry-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.entry-editor-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.entry-editor input,
+.entry-editor textarea {
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text-primary);
+}
+
+.entry-editor-row input {
+  flex: 1;
+  min-width: 0;
+}
+
+.entry-editor-minutes {
+  flex: 0 0 5rem;
+}
+
+.entry-editor-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* ---- Footer / export ---- */
+
+.app-footer {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-soft);
+  display: flex;
+  gap: 0.6rem;
+}
+
+.export-btn {
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.export-btn:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary-strong);
+}
+
+/* ---- Responsive ---- */
+
+@media (max-width: 860px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+  }
+
+  .day-view {
+    margin-top: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app {
+    padding: 1.1rem 0.9rem 2rem;
+  }
+
+  header h1 {
+    font-size: 1.35rem;
+  }
+
+  .logo-amco {
+    height: 26px;
+  }
+
+  .logo-cpm {
+    height: 48px;
+    margin: -11px 0;
+  }
+
+  .controls {
+    gap: 0.6rem;
+  }
+
+  .record-btn {
+    flex: 1 1 100%;
+    justify-content: center;
+    padding: 0.85rem 1.4rem;
+  }
+
+  .transcript {
+    font-size: 1rem;
+    min-height: 7rem;
+    padding: 0.9rem 1rem;
+  }
+
+  .calendar {
+    padding: 0.7rem 0.5rem 0.75rem;
+  }
+
+  .cal-day {
+    font-size: 0.85rem;
+    padding: 0.4rem 0 0.7rem;
+  }
+
+  .day-summary {
+    gap: 1rem;
+  }
+
+  .log-table th,
+  .log-table td {
+    padding: 0.45rem 0.5rem;
+  }
+
+  .entry-editor-row {
+    flex-wrap: wrap;
+  }
+
+  .review-actions {
+    flex-wrap: wrap;
+  }
 }
