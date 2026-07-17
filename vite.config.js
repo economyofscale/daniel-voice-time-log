@@ -11,4 +11,10 @@ export default defineConfig({
       ignored: ['**/release/**'],
     },
   },
+  optimizeDeps: {
+    // transformers.js must not be pre-bundled (WASM/worker assets), but its
+    // CJS runtime onnxruntime-web must be, or it crashes in dev.
+    exclude: ['@xenova/transformers'],
+    include: ['onnxruntime-web'],
+  },
 });

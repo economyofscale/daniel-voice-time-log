@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useSpeechRecognition } from './useSpeechRecognition.js';
+import { useWhisper } from './useWhisper.js';
 import { parseTranscript, describeApiError } from './lib/parseEntry.js';
 import { localParse } from './lib/localParse.js';
 import { addEntry, todayLocal } from './lib/db.js';
@@ -29,13 +29,15 @@ export default function App() {
   const {
     isSupported,
     isRecording,
-    finalTranscript,
-    interimTranscript,
+    isTranscribing,
+    transcript,
     error: speechError,
+    modelReady,
+    modelProgress,
     start,
     stop,
     reset,
-  } = useSpeechRecognition({ lang });
+  } = useWhisper({ lang });
 
   // 'idle' | 'parsing' | 'review' | 'saving'
   const [phase, setPhase] = useState('idle');
@@ -47,9 +49,7 @@ export default function App() {
   const [savedToast, setSavedToast] = useState(null);
   const [dayRefresh, setDayRefresh] = useState(0);
   const [selectedDate, setSelectedDate] = useState(todayLocal);
-  const wasRecordingRef = useRef(false);
-
-  const hasTranscript = finalTranscript || interimTranscript;
+  const lastParsedRef = useRef('');
 
   async function runParse(transcript) {
     setApiError(null);
@@ -81,14 +81,16 @@ export default function App() {
     }
   }
 
-  // Spec: parse on stop. Detect the recording -> stopped transition.
+  // Whisper delivers the transcript after Stop; parse it as soon as it lands.
   useEffect(() => {
-    if (wasRecordingRef.current && !isRecording && finalTranscript.trim()) {
-      runParse(finalTranscript.trim());
+    const text = transcript.trim();
+    if (text && text !== lastParsedRef.current) {
+      lastParsedRef.current = text;
+      runParse(text);
     }
-    wasRecordingRef.current = isRecording;
+    if (!text) lastParsedRef.current = '';
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isRecording]);
+  }, [transcript]);
 
   async function handleSave(fields, date) {
     setPhase('saving');
@@ -129,9 +131,9 @@ export default function App() {
           <h1>Voice Time Log</h1>
         </header>
         <div className="notice notice-error">
-          This browser doesn&apos;t support the Web Speech API. Please use
-          Chrome or Edge — a manual entry form will be added as a fallback in a
-          later phase.
+          This environment doesn&apos;t support microphone recording
+          (MediaRecorder API). Please use a current version of Chrome, Edge,
+          or the desktop app.
         </div>
       </main>
     );
@@ -192,14 +194,21 @@ export default function App() {
             </>
           ) : (
             <>
+              {modelProgress && (
+                <div className="notice notice-info">
+                  Downloading speech model (~150&nbsp;MB, first time only) —{' '}
+                  {Math.round(modelProgress.progress)}%
+                </div>
+              )}
+
               <div className="controls">
                 <button
                   className={`record-btn ${isRecording ? 'recording' : ''}`}
                   onClick={isRecording ? stop : start}
-                  disabled={phase === 'parsing'}
+                  disabled={phase === 'parsing' || isTranscribing || !modelReady}
                 >
                   <span className="record-dot" />
-                  {isRecording ? 'Stop' : 'Record'}
+                  {isRecording ? 'Stop' : modelReady ? 'Record' : 'Loading model…'}
                 </button>
 
                 <label className="lang-select">
@@ -215,12 +224,11 @@ export default function App() {
                   </select>
                 </label>
 
-                {hasTranscript && !isRecording && phase === 'idle' && (
+                {transcript && !isRecording && !isTranscribing && phase === 'idle' && (
                   <>
                     <button
                       className="clear-btn"
-                      onClick={() => runParse(finalTranscript.trim())}
-                      disabled={!finalTranscript.trim()}
+                      onClick={() => runParse(transcript.trim())}
                     >
                       Parse again
                     </button>
@@ -231,24 +239,24 @@ export default function App() {
                 )}
               </div>
 
-              {isRecording && <p className="status">Listening…</p>}
+              {isRecording && <p className="status">Recording — speak now…</p>}
+              {isTranscribing && (
+                <p className="status parsing">Transcribing…</p>
+              )}
               {phase === 'parsing' && (
                 <p className="status parsing">Extracting entry with Claude…</p>
               )}
 
               <section className="transcript" aria-live="polite">
-                {hasTranscript ? (
-                  <p>
-                    {finalTranscript}
-                    {interimTranscript && (
-                      <span className="interim"> {interimTranscript}</span>
-                    )}
-                  </p>
+                {transcript ? (
+                  <p>{transcript}</p>
                 ) : (
                   <p className="placeholder">
                     {isRecording
-                      ? 'Say something — words appear here as they are recognized.'
-                      : 'Press Record and describe what you worked on, e.g. “Spent half an hour on code review for Project Apollo.” When you press Stop, the entry is parsed automatically.'}
+                      ? 'Recording… describe what you worked on, then press Stop.'
+                      : isTranscribing
+                        ? 'Transcribing your recording — this takes a few seconds.'
+                        : 'Press Record and describe what you worked on, e.g. “Spent half an hour on code review for Project Apollo.” After you press Stop, the recording is transcribed and parsed automatically.'}
                   </p>
                 )}
               </section>
