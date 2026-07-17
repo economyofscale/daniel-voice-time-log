@@ -9,6 +9,8 @@ to you, and export everything to CSV/JSON.
 Runs fully local: speech recognition happens on your machine (no cloud speech
 service), and all entries are stored on your device.
 
+![Voice Time Log — calendar, daily/weekly gauges, and day table](docs/screenshot.png)
+
 ## Features
 
 - 🎙️ **Voice entry** — record a sentence like *"Spent half an hour on code
